@@ -38,7 +38,7 @@ const gallery = new SimpleLightbox('.gallery a', {
 
 export function imagesTemplate(images) {
   const markup = images.map(imgTemplate).join('');
-  refs.gallery.innerHTML = markup;
+  refs.gallery.insertAdjacentHTML('beforeend', markup);
   gallery.refresh();
   return markup;
 }
