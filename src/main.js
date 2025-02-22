@@ -49,17 +49,19 @@ async function onSubmit(e) {
   refs.gallery.innerHTML = '';
   refs.form.reset();
   await fetchImages(fetchParameters);
+  checkEndOfCollection();
+  hideOnlyLoader();
 }
 
 async function loadMore() {
-  showLoader();
   fetchParameters.page += 1;
+  showLoader();
   await fetchImages(fetchParameters);
   checkEndOfCollection();
-  hideLoader();
+  hideOnlyLoader();
 }
 
-export function hideOnlyLoader() {
+function hideOnlyLoader() {
   refs.loader.classList.add('visually-hidden');
 }
 
@@ -68,17 +70,25 @@ function showLoader() {
   refs.loadBtn.classList.add('visually-hidden');
 }
 
-export function hideLoader() {
+function hideLoader() {
   refs.loader.classList.add('visually-hidden');
   refs.loadBtn.classList.remove('visually-hidden');
 }
 
 function checkEndOfCollection() {
-  const maxPage = Math.ceil(fetchParameters.total / fetchParameters.per_page);
+  const maxPage = Math.ceil(
+    fetchParameters.totalHits / fetchParameters.per_page
+  );
+  if (maxPage === 0) {
+    refs.loadBtn.classList.add('visually-hidden');
+    return;
+  }
   if (fetchParameters.page >= maxPage) {
     iziToast.info({
       message: "We're sorry, but you've reached the end of search results.",
     });
     refs.loadBtn.classList.add('visually-hidden');
+  } else {
+    refs.loadBtn.classList.remove('visually-hidden');
   }
 }

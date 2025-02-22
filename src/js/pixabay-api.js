@@ -6,8 +6,6 @@ axios.defaults.baseURL = 'https://pixabay.com';
 
 import { imagesTemplate } from './render-functions.js';
 import { errorObj } from '../main.js';
-import { hideLoader } from '../main.js';
-import { hideOnlyLoader } from '../main.js';
 
 export async function fetchImages(params) {
   try {
@@ -18,9 +16,8 @@ export async function fetchImages(params) {
       throw new Error();
     }
     imagesTemplate(result);
-    hideLoader();
   } catch {
-    hideOnlyLoader();
     iziToast.error(errorObj);
+    return;
   }
 }
