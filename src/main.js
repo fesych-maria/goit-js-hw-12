@@ -1,7 +1,8 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-import iconPath from './img/icon.svg';
+import iconError from './img/error.svg';
+import iconInfo from './img/info.svg';
 import { fetchImages } from './js/pixabay-api.js';
 
 export const refs = {
@@ -15,13 +16,21 @@ export const refs = {
 
 export const errorObj = {
   position: 'topRight',
+  message: "We're sorry, but you've reached the end of search results.",
+  messageColor: '#fafafb',
+  messageSize: '16px',
+  backgroundColor: '#ef4040',
+  iconUrl: iconError,
+};
+
+export const infoObj = {
+  position: 'topRight',
   message:
     'Sorry, there are no images matching your search query. Please try again!',
   messageColor: '#fafafb',
   messageSize: '16px',
-  backgroundColor: '#ef4040',
-  maxWidth: '432px',
-  iconUrl: iconPath,
+  backgroundColor: '#09f',
+  iconUrl: iconInfo,
 };
 
 refs.form.addEventListener('submit', onSubmit);
@@ -59,6 +68,7 @@ async function loadMore() {
   await fetchImages(fetchParameters);
   checkEndOfCollection();
   hideOnlyLoader();
+  onScroll();
 }
 
 function hideOnlyLoader() {
@@ -84,11 +94,19 @@ function checkEndOfCollection() {
     return;
   }
   if (fetchParameters.page >= maxPage) {
-    iziToast.info({
-      message: "We're sorry, but you've reached the end of search results.",
-    });
+    iziToast.info(infoObj);
     refs.loadBtn.classList.add('visually-hidden');
   } else {
     refs.loadBtn.classList.remove('visually-hidden');
   }
+}
+
+function onScroll() {
+  const imgLi = document.querySelector('.gallery-item');
+  const height = imgLi.getBoundingClientRect().height;
+  const totalHeight = height * 2;
+  window.scrollBy({
+    top: totalHeight,
+    behavior: 'smooth',
+  });
 }
